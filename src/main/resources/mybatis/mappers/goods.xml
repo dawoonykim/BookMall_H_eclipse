@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.goods">
+
+    <resultMap id="goodsResult" type="goodsVO">
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsSort" column="goods_sort"/>
+        <result property="goodsTitle" column="goods_title"/>
+        <result property="goodsWriter" column="goods_writer"/>
+        <result property="goodsPublisher" column="goods_publisher"/>
+        <result property="goodsPrice" column="goods_price"/>
+        <result property="goodsSalesPrice" column="goods_sales_price"/>
+        <result property="goodsPublishedDate" column="goods_published_date"/>
+        <result property="goodsTotalPage" column="goods_total_page"/>
+        <result property="goodsIsbn" column="goods_isbn"/>
+        <result property="goodsDeliveryPrice" column="goods_delivery_price"/>
+        <result property="goodsDeliveryDate" column="goods_delivery_date"/>
+        <result property="goodsStatus" column="goods_status"/>
+        <result property="goodsIntro" column="goods_intro"/>
+        <result property="goodsWriterIntro" column="goods_writer_intro"/>
+        <result property="goodsContentsOrder" column="goods_contents_order"/>
+        <result property="goodsFileName" column="fileName"/>
+        <result property="goodsPoint" column="goods_point"/>
+        <result property="goodsPublisherComment" column="goods_publisher_comment"/>
+        <result property="goodsRecommendation" column="goods_recommendation"/>
+    </resultMap>
+
+    <resultMap id="imageResult" type="imageFileVO">
+        <result property="imageId" column="image_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="fileName" column="fileName"/>
+        <result property="fileType" column="fileType"/>
+        <result property="regId" column="reg_id"/>
+    </resultMap>
+
+    <select id="selectGoodsList" parameterType="String" resultMap="goodsResult">
+        <![CDATA[
+        select t.*
+        from (select g.GOODS_ID             as goodsId,
+                     g.GOODS_SORT           as goodsSort,
+                     g.GOODS_TITLE          as goodsTitle,
+                     g.GOODS_WRITER         as goodsWriter,
+                     g.GOODS_PUBLISHER      as goodsPublisher,
+                     g.GOODS_PRICE          as goodsPrice,
+                     g.GOODS_SALES_PRICE    as goodsSalesPrice,
+                     g.GOODS_PUBLISHED_DATE as goodsPublishedDate,
+                     g.GOODS_TOTAL_PAGE     as goodsTotalPage,
+                     g.GOODS_ISBN           as goodsIsbn,
+                     g.GOODS_DELIVERY_PRICE as goodsDeliveryPrice,
+                     g.GOODS_DELIVERY_DATE  as goodsDeliveryDate,
+                     g.GOODS_STATUS         as goodsStatus,
+                     g.GOODS_INTRO          as goodsIntro,
+                     g.GOODS_WRITER_INTRO   as goodsWriterIntro,
+                     g.GOODS_CONTENTS_ORDER as goodsContentsOrder,
+                     g.GOODS_POINT          as goodsPoint,
+                     g.GOODS_PUBLISHER_COMMENT as goodsPublisherComment,
+                     g.GOODS_RECOMMENDATION as goodsRecommendation,
+                     d.FILENAME as fileName
+              from t_shopping_goods g,
+                   t_goods_detail_image d
+              where g.goods_id = d.goods_id
+                and d.filetype = 'main_image'
+                and goods_status = #{goodsStatus}
+              order by g.goods_creDate desc) t
+        where rowNum < 16
+        ]]>
+	</select>
+
+    <select id="selectGoodsDetail" parameterType="String" resultMap="goodsResult">
+        <![CDATA[
+        select g.GOODS_ID             as goodsId,
+               g.GOODS_SORT           as goodsSort,
+               g.GOODS_TITLE          as goodsTitle,
+               g.GOODS_WRITER         as goodsWriter,
+               g.GOODS_PUBLISHER      as goodsPublisher,
+               g.GOODS_PRICE          as goodsPrice,
+               g.GOODS_SALES_PRICE    as goodsSalesPrice,
+               g.GOODS_PUBLISHED_DATE as goodsPublishedDate,
+               g.GOODS_TOTAL_PAGE     as goodsTotalPage,
+               g.GOODS_ISBN           as goodsIsbn,
+               g.GOODS_DELIVERY_PRICE as goodsDeliveryPrice,
+               g.GOODS_DELIVERY_DATE  as goodsDeliveryDate,
+               g.GOODS_STATUS         as goodsStatus,
+               g.GOODS_INTRO          as goodsIntro,
+               g.GOODS_WRITER_INTRO   as goodsWriterIntro,
+               g.GOODS_CONTENTS_ORDER as goodsContentsOrder,
+               g.GOODS_POINT          as goodsPoint,
+               g.GOODS_PUBLISHER_COMMENT as goodsPublisherComment,
+               g.GOODS_RECOMMENDATION as goodsRecommendation,
+               d.FILENAME as fileName
+        from T_SHOPPING_GOODS g,
+             T_GOODS_DETAIL_IMAGE d
+        where g.GOODS_ID = d.GOODS_ID
+          and d.FILETYPE = 'main_image'
+          and g.GOODS_ID = #{goodsId}
+        order by g.goods_id
+        ]]>
+    </select>
+
+    <select id="selectGoodsDetailImage" parameterType="String" resultMap="imageResult">
+        <![CDATA[
+        select IMAGE_ID as imageId, GOODS_ID as goodsId, FILENAME as fileName, FILETYPE as fileType, REG_ID as regId
+        from T_GOODS_DETAIL_IMAGE
+        where FILETYPE = 'detail_image1'
+          and GOODS_ID = #{goodsID}
+        ]]>
+    </select>
+
+    <select id="selectGoodsBySearchWord" parameterType="String" resultMap="goodsResult">
+        <![CDATA[
+        select g.GOODS_ID             as goodsId,
+               g.GOODS_SORT           as goodsSort,
+               g.GOODS_TITLE          as goodsTitle,
+               g.GOODS_WRITER         as goodsWriter,
+               g.GOODS_PUBLISHER      as goodsPublisher,
+               g.GOODS_PRICE          as goodsPrice,
+               g.GOODS_SALES_PRICE    as goodsSalesPrice,
+               g.GOODS_PUBLISHED_DATE as goodsPublishedDate,
+               g.GOODS_TOTAL_PAGE     as goodsTotalPage,
+               g.GOODS_ISBN           as goodsIsbn,
+               g.GOODS_DELIVERY_PRICE as goodsDeliveryPrice,
+               g.GOODS_DELIVERY_DATE  as goodsDeliveryDate,
+               g.GOODS_STATUS         as goodsStatus,
+               g.GOODS_INTRO          as goodsIntro,
+               g.GOODS_WRITER_INTRO   as goodsWriterIntro,
+               g.GOODS_CONTENTS_ORDER as goodsContentsOrder,
+               g.GOODS_POINT          as goodsPoint,
+               g.GOODS_PUBLISHER_COMMENT as goodsPublisherComment,
+               g.GOODS_RECOMMENDATION as goodsRecommendation,
+               d.FILENAME as fileName
+        from T_SHOPPING_GOODS g,
+             T_GOODS_DETAIL_IMAGE d
+        where g.GOODS_ID = d.GOODS_ID
+          and d.FILETYPE = 'main_image'
+          and g.goods_title like '%' || #{searchWord} || '%'
+        order by g.GOODS_CREDATE desc
+        ]]>
+    </select>
+
+    <select id="selectKeywordSearch" parameterType="String" resultType="String">
+        <![CDATA[
+        select GOODS_TITLE from T_SHOPPING_GOODS
+        where GOODS_TITLE like '%' || #{keyWord} || '%'
+        order by GOODS_CREDATE desc
+        ]]>
+    </select>
+</mapper>

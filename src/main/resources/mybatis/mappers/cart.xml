@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.cart">
+    <resultMap id="cartResult" type="cartVO">
+        <result property="cartId" column="cart_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="creDate" column="credate"/>
+        <result property="cartGoodsQty" column="cart_goods_qty"/>
+        <result property="goodsPrice" column="goods_price"/>
+        <result property="goodsDeliveryPrice" column="goods_delivery_price"/>
+        <result property="goodsSalesPrice" column="goods_sales_price"/>
+        <result property="goodsPoint" column="goods_point"/>
+    </resultMap>
+
+    <resultMap id="goodsResult" type="goodsVO">
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsSort" column="goods_sort"/>
+        <result property="goodsTitle" column="goods_title"/>
+        <result property="goodsWriter" column="goods_writer"/>
+        <result property="goodsPublisher" column="goods_publisher"/>
+        <result property="goodsPrice" column="goods_price"/>
+        <result property="goodsSalesPrice" column="goods_sales_price"/>
+        <result property="goodsPublishedDate" column="goods_published_date"/>
+        <result property="goodsTotalPage" column="goods_total_page"/>
+        <result property="goodsIsbn" column="goods_isbn"/>
+        <result property="goodsDeliveryPrice" column="goods_delivery_price"/>
+        <result property="goodsDeliveryDate" column="goods_delivery_date"/>
+        <result property="goodsStatus" column="goods_status"/>
+        <result property="goodsIntro" column="goods_intro"/>
+        <result property="goodsWriterIntro" column="goods_writer_intro"/>
+        <result property="goodsContentsOrder" column="goods_contents_order"/>
+        <result property="goodsFileName" column="fileName"/>
+        <result property="goodsPoint" column="goods_point"/>
+    </resultMap>
+
+    <select id="selectCountInCart" resultType="String" parameterType="CartVO">
+        <![CDATA[
+        select decode(count(*), 1, 'true', 0, 'false')
+        from T_SHOPPING_CART
+        where GOODS_ID = #{goodsId}
+          and MEMBER_ID = #{memberId}
+        ]]>
+    </select>
+
+    <insert id="insertGoodsInCart" parameterType="CartVO">
+        INSERT INTO T_SHOPPING_CART (CART_ID, GOODS_ID, MEMBER_ID)
+        VALUES (#{cartId}, #{goodsId}, #{memberId})
+    </insert>
+
+
+    <select id="selectMaxCartId" resultType="int">
+        <![CDATA[
+        select nvl(max(CART_ID), 0) + 1
+        from T_SHOPPING_CART
+        ]]>
+    </select>
+
+    <select id="selectCartList" parameterType="cartVO" resultMap="cartResult">
+        <![CDATA[
+        select c.CART_ID              as cartId,
+               c.GOODS_ID             as goodsId,
+               c.MEMBER_ID            as memberId,
+               c.CREDATE              as creDate,
+               c.CART_GOODS_QTY       as cartGoodsQty,
+               g.GOODS_PRICE          as goodsPrice,
+               g.GOODS_DELIVERY_PRICE as goodsDeliveryPrice,
+               g.GOODS_POINT          as goodsPoint
+        from T_SHOPPING_CART c,
+             T_SHOPPING_GOODS g
+        where MEMBER_ID = #{memberId}
+        ]]>
+    </select>
+
+    <select id="selectGoodsList" parameterType="java.util.Map" resultMap="goodsResult">
+        <![CDATA[
+          select
+               g.GOODS_ID             as goodsId,
+               g.GOODS_SORT           as goodsSort,
+               g.GOODS_TITLE          as goodsTitle,
+               g.GOODS_WRITER         as goodsWriter,
+               g.GOODS_PUBLISHER      as goodsPublisher,
+               g.GOODS_PRICE          as goodsPrice,
+               g.GOODS_SALES_PRICE    as goodsSalesPrice,
+               g.GOODS_PUBLISHED_DATE as goodsPublishedDate,
+               g.GOODS_TOTAL_PAGE     as goodsTotalPage,
+               g.GOODS_ISBN           as goodsIsbn,
+               g.GOODS_DELIVERY_PRICE as goodsDeliveryPrice,
+               g.GOODS_DELIVERY_DATE  as goodsDeliveryDate,
+               g.GOODS_STATUS         as goodsStatus,
+               g.GOODS_INTRO          as goodsIntro,
+               g.GOODS_WRITER_INTRO   as goodsWriterIntro,
+               g.GOODS_CONTENTS_ORDER as goodsContentsOrder,
+               g.GOODS_POINT          as goodsPoint,
+               g.GOODS_PUBLISHER_COMMENT as goodsPublisherComment,
+               g.GOODS_RECOMMENDATION as goodsRecommendation,
+               g.GOODS_POINT as goodsPoint,
+               g.GOODS_POINT as goodsPoint,
+               d.FILENAME as fileName
+        from T_SHOPPING_GOODS g,
+             T_GOODS_DETAIL_IMAGE d
+        where g.GOODS_ID = d.GOODS_ID
+          and d.FILETYPE = 'main_image'
+          and g.GOODS_ID in
+        ]]>
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item.goodsId}
+        </foreach>
+        <![CDATA[
+         order by g.GOODS_CREDATE desc
+        ]]>
+    </select>
+
+    <delete id="deleteCartGoods" parameterType="int">
+        delete
+        from T_SHOPPING_CART
+        where CART_ID = #{cartId}
+    </delete>
+
+    <update id="updateCartGoodsQty" parameterType="cartVO">
+	    <![CDATA[
+        update T_SHOPPING_CART
+        set CART_GOODS_QTY=#{cartGoodsQty}
+        where MEMBER_ID = #{memberId}
+          and GOODS_ID = #{goodsId}
+        ]]>
+	</update>
+
+</mapper>

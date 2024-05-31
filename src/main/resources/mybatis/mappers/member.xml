@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.member">
+    <resultMap id="memberResult" type="MemberVO">
+        <result property="memberId" column="member_id"/>
+        <result property="memberPw" column="member_pw"/>
+        <result property="memberName" column="member_name"/>
+        <result property="memberGender" column="member_gender"/>
+        <result property="tel1" column="tel1"/>
+        <result property="tel2" column="tel2"/>
+        <result property="tel3" column="tel3"/>
+        <result property="hp1" column="hp1"/>
+        <result property="hp2" column="hp2"/>
+        <result property="hp3" column="hp3"/>
+        <result property="smsStsYn" column="smssts_yn"/>
+        <result property="email1" column="email1"/>
+        <result property="email2" column="email2"/>
+        <result property="emailStsYn" column="emailsts_yn"/>
+        <result property="zipCode" column="zipcode"/>
+        <result property="roadAddress" column="roadAddress"/>
+        <result property="jibunAddress" column="jibunAddress"/>
+        <result property="namujiAddress" column="namujiAddress"/>
+        <result property="memberBirthY" column="member_birth_y"/>
+        <result property="memberBirthM" column="member_birth_m"/>
+        <result property="memberBirthD" column="member_birth_d"/>
+        <result property="memberBirthGn" column="member_birth_gn"/>
+        <result property="joinDate" column="joinDate"/>
+    </resultMap>
+
+    <select id="login" parameterType="java.util.Map" resultType="memberVO">
+    <![CDATA[
+
+        select MEMBER_ID as memberId, MEMBER_PW as memberPw, MEMBER_NAME as memberName, MEMBER_GENDER as memberGender,
+               TEL1 as tel1, TEL2 as tel2, TEL3 as tel3, HP1 as hp1, HP2 as hp2, HP3 as hp3, SMSSTS_YN as smsStsYn,
+               EMAIL1 as email1, EMAIL2 as email2, EMAILSTS_YN as emailStsYn, ZIPCODE as zipCode, ROADADDRESS as roadAddress,
+               JIBUNADDRESS as jibunAddress, NAMUJIADDRESS as namujiAddress, MEMBER_BIRTH_Y as memberBirthY,
+               MEMBER_BIRTH_M as memberBirthM, MEMBER_BIRTH_D as memberBirthD, MEMBER_BIRTH_GN as memberBirthGn
+        from T_SHOPPING_MEMBER
+        where MEMBER_ID like #{memberId}
+          and MEMBER_PW like #{memberPw}
+        ]]>
+    </select>
+
+    <select id="selectOverlappedID" parameterType="String" resultType="String">
+        <![CDATA[
+        select decode(count(*), 1, 'true', 0, 'false')
+        from T_SHOPPING_MEMBER
+        where MEMBER_ID = #{id}
+        ]]>
+    </select>
+
+    <insert id="insertNewMember" parameterType="memberVO">
+        <![CDATA[
+        insert into T_SHOPPING_MEMBER
+        (member_id, member_pw, member_name, member_gender,
+         tel1, tel2, tel3, hp1, hp2, hp3, smssts_yn,
+         email1, email2, emailsts_yn,
+         zipcode, roadaddress, jibunaddress, namujiaddress,
+         member_birth_y, member_birth_m, member_birth_d, member_birth_gn)
+        values (#{memberId}, #{memberPw}, #{memberName}, #{memberGender},
+                #{tel1}, #{tel2}, #{tel3}, #{hp1}, #{hp2}, #{hp3}, #{smsStsYn},
+                #{email1}, #{email2}, #{emailStsYn},
+                #{zipCode}, #{roadAddress}, #{jibunAddress}, #{namujiAddress},
+                #{memberBirthY}, #{memberBirthM}, #{memberBirthD}, #{memberBirthGn})
+        ]]>
+    </insert>
+
+</mapper>
